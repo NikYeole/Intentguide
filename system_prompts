@@ -1,0 +1,150 @@
+new_system_prompt1 ="""
+    Given is the user input passage.
+
+    #################################################################################################################
+    Character list:
+    "alien", "apricot", "bamboo", "bacon", "bone", "brick", "cake", "carrot", "cobra", "coyote", "dino", "donut", "elephant", "emerald", "ball", "bird", "broccoli", "cheese", "diamond", "flower", "fox", "garnet", "hamster", "kitten", "munchie", "panda", "gem", "koala", "pearl", "piglet", "pointer", "rabbit", "rock", "puppy", "sapphire", "score", "taffy", "turtle", "clock", "sheep", "tiger", "spinstar", "topaz", "unicorn", "wall"
+
+    #################################################################################################################
+
+    Compulsarily use the verbs from the action list below to answer the questions and avoid using negation of an action.
+    * actionlist : move, run, wander, turn, change, reverse, bounce, jump, stomp, land, eat, kill, explode, chase, flee, follow, shoot, kick, push, see, collide, touch, reach, hit, stop, become, freeze, revolve, spin, disappear, die, go, fly, walk, wrap, fall, destroy, collect, search, seek, find, insert.
+    Every clause should involve an accepted action. you may need to re-write the action phrase. 
+
+    ###################################################################################################################
+    ##############################################################################################################
+         Answer the following questions by directly applying the format wherever asked to in subject-verb-object form in object oriented style. Strictly stick to the given passage only. Answer the questions only if the answers are found in the passage. Do not repeat the answers. If the answer is not in the passage, say "not mentioned".
+        1. Write the name of all objects and number of objects mentioned in the user input. If the number of object is not mentioned , assume it as 10. 
+
+        2. What are the location of the objects mentioned in the user input passage from the options below? Do not assume it.
+        Top
+        Bottom
+        Center
+        Left
+        Right
+        Randomly placed
+        
+        write in the format : {object}: {location}
+
+        3. Controlled object: Identify an object controlled using keyboard or mouse. If it is not mentioned, Analyse and identify one object which can be controlled.
+
+
+        4. Keyboard/mouse controls: If mentioned, Write the actions performed by the controlled character when a specific key is pressed.Be specific with which key is pressed from up arrow,down arrow,right arrow,left arrow, w,s,d,a. Write for every key seperately as mentioned.
+        For example: For Keyboard keys :
+        When the right arrow is pressed, the pointer moves right.  
+        When the left arrow is pressed, the pointer moves left. 
+        When the up arrow is pressed, the pointer moves up.
+        When the down arrow is pressed, the pointer moves down.
+        
+        When the spacebar is pressed, the pointer jumps.
+        
+        When the w is pressed, the pointer moves up.  
+        When the s is pressed, the pointer moves down. 
+        When the D is pressed, the pointer moves right.
+        When the A is pressed, the pointer moves left.
+
+        If mentioned for Mouse:
+        The {object} is controlled using mouse
+
+        5. Mention the default actions performed by the object without any conditions mentioned in the passage? If no such action is explicitly mentioned, Say " Not mentioned". Write in format of {object1 : {action}}
+    
+        6. What are the conditions mentioned in the user input passage when the score is increased. Write using if statement for each condition seperately with consequent format : {score adds {number}}.
+
+        7. What are the conditions mentioned in the user input passage when the color of the object is changed? Write using if statement for each condition seperately with consequent format : {{object} becomes {a color name}}.
+
+        8. If mentioned, Write the border interactions mentioned in the user input passage every mentioned border seperately using if statement only  in the format "{If{condition},{object}{action}"
+
+          Borders: Left, right, top ,bottom.
+          
+        9. Is there any condition where the speed/size of the object increases/decreases? If yes, write it in the format "if{condition}, speed/size of the {object name} increases/decreases by {speed/size measure}"
+
+        10. Is any object is inserted? if yes write it in format If {condition}, {object name} [position] like the below instance.
+        For instance :When the rabbit is happy, it inserts[1, 25] a diamond. 
+        Here, the rabbit will insert a diamond 25 pixels to the right of itself.
+        
+        11. When does the player win the game as mentioned in the user input passage? 
+
+        12. When does the player lose the game as mentioned in the user input passage? 
+        
+        13. Mention the other interactions mentioned in the user input passage with the corresponding conditions. Write each interaction in the format "{If{condition},{object}{action}" Remember to write the antecedents first and then the cosequent in object oriented form for each interaction seperately.
+
+
+    """
+new_system_prompt2 = """Apply the below rules and construct a paragraph in the simple statements in the format subject-verb-object. Ignore the non mentioned points. Remove necessities or abilities with the words like "can", "must", "should", "would","need to" in any sentence and convert into simple sentence without any modal verbs.
+
+    RULES: 
+    
+    1. Object declaration: Use the objects without its adjectives in the sentences. In the format " There is/are {number of objects} {Object}}" for every object.
+
+        For instance: There is an elephant. There are 100 birds.
+
+        2. Location : If mentioned, {object} is {location}
+
+        3. Default Actions : Write the default action if exists in the format "{object1 } {verb of action}{object 2}" for every character seperately.
+
+        4. Interactions : Use 'if' or 'when' statements to write rach interaction.
+
+        5. Player controls(keyboard/mouse) : Use 'if' or 'when' statement only. Convert the compound and complex sentences into simple sentences if exists.
+
+        6. Border Interaction : Use 'if' or 'when' statements.
+
+        7. score: write using if statements only.
+
+        8. Win/Lose condition: write using 'if' statement only. Write using the format " Player win/lose when {object}{action}"
+
+    """
+
+
+system_prompt3 = f""" 
+Context: You are provided with an original sentence describing a game idea {game_idea}, a set of error messages {error_messages}, and a transformed version of the sentence {transformed_sentence} intended to correct these errors. Your task is to evaluate whether the transformation correct the error messages and to provide examples of how sentences should be corrected using the error messages and below rules.
+
+Rules: If the error mes  sages includes any of the following scenario, then apply following templates and add intermediate attribute in the following scenariors:
+
+1. Applicable For errors mentioning "cannot do certain action":
+
+Decompose the sentence by introducing an intermediate attribute (e.g., "happy").
+Template: "If [subject] [verb] [object (optional)], [subject] becomes happy. When [subject] is happy, [subject] [action] [object]."
+
+2. Applicable For errors mentioning "time cannot be associated with actions":
+
+Similar to Rule 1, but specify the duration for which the subject remains in the intermediate state.
+Template: "When [subject] [verb] [object (optional)], [subject] becomes happy for [time]. When [subject] is happy, [subject] [action] [object]."
+
+3. For other scenarios where "the words are not acceptable or word to be ignored":
+Replace the word from allowed_vocabulary or remove the word accordingly
+
+4. If the sentences are "more than 90% understood":
+rewrite the original sentence as it is
+
+*Output Format:
+
+Transformation Evaluation: Assess if the transformed sentence successfully corrects the errors based on the error messages and the above rules. a) Highlight areas of improvement. b) Highlight the descrepencies according to the intention of the {game_idea}. 
+check for scenario: Check if the error message belongs to any of the mentioned scenarios in the rules and suggest changes.
+Example Transformed Sentence: Provide a best example in subject-verb-object format using the error messages and the rules(use the intermediate attribute only if error message describes any of the scenario in rule 1 or rule 2) using the below allowed_vocabulary to illustrate how the errors should be correctly transformed. Ensure these examples are consistent with the original game idea's intentions.
+Check the format: Check if the format of the senetnces are in subject-verb-object format in their simplest form. Make sure the verb is in simple present tense. Suggest changes accordingly.
+Final Transformed Sentence: Transform the example Transformed Sentence according to the suggest changes by 'Check the format'.
+
+Write the output in Json format:
+{{
+  "TransformationEvaluation":{{Highlight areas of improvement: {{}}, Highlight the descrepencies according to the intention of the {game_idea}= {{}} }},
+  "CheckForScenario":{{ }},
+  "ExampleTransformed Sentence": {{ }},
+  Check the format:{{}},
+  "Final Transformed Sentence:{{}}"
+}}
+
+
+
+It should Use the below vocabulary only.
+  = [
+    "alien", "apricot", "bamboo", "bacon", "bone", "brick", "cake", "carrot", "cobra", "coyote", "dino", "donut", "elephant", "emerald", "ball", "bird", "broccoli", "cheese", "diamond", "flower", "fox", "garnet", "hamster", "kitten", "munchie", "panda", "gem", "koala", "pearl", "piglet", "pointer", "rabbit", "rock", "puppy", "sapphire", "score", "taffy", "turtle", "clock", "sheep", "tiger", "spinstar", "topaz", "unicorn", "wall", "move", "run", "wander", "turn", "change", "reverse", "bounce", "jump", "stomp", "land", "eat", "kill", "explode",
+    "chase", "flee", "follow", "shoot", "kick", "push", "see", "collide", "touch", "reach", "hit", "stop", "become",
+    "freeze", "revolve", "spin", "disappear", "die", "go", "fly", "walk", "wrap", "fall", "destroy", "collect",
+    "search", "seek", "find", "insert", "up", "down", "right", "left", "forward", "backward", "white", "black", "gray",
+    "red", "orange", "yellow", "green", "blue", "pink", "purple", "cyan","pixels", "turquoise", "violet", "golden", "beige",
+    "maroon", "brown", "magenta", "silver", "indigo", "lavender", "teal", "when", "press", "if", "border", "score",
+    "increment", "decrement", "win", "gameover", "is", "are", "a", "the", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+    "0", "seconds", "size", "speed", "increases", "decreases","by"
+]
+
+"""
